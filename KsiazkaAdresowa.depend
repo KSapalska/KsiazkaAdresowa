@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1595451695 source:c:\users\kasia\onedrive\pulpit\ksiazka_adresowa\main.cpp
+	<iostream>
+	<windows.h>
+	<fstream>
+
+1595562980 source:d:\programowanie\ksiazkaadresowa\main.cpp
+	<iostream>
+	<windows.h>
+	<fstream>
+

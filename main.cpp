@@ -38,7 +38,7 @@ char wyswietlMenu () {
     return wybor;
 }
 
-vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia) {   //updated
+vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia,int &idZalogowanegoUzytkownika) {   //updated
     Adresat osoba;
     int nrLinii = 1;
     stringstream ss(linia);
@@ -70,12 +70,14 @@ vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &ad
         }
         nrLinii++;
     }
-    adresaci.push_back(osoba);
+
+     if  (idZalogowanegoUzytkownika==osoba.idUzytkownika) adresaci.push_back(osoba);
 
     return adresaci;
-}
+    }
 
-void odczytajDane(vector <Adresat> &adresaci) {
+
+void odczytajDane(vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
 
     string linia;
     fstream plik;
@@ -87,7 +89,7 @@ void odczytajDane(vector <Adresat> &adresaci) {
         Sleep(1000);
     } else {
         while(getline(plik,linia)) {
-            rozdzielDaneNaPojedynczeInformacjeOsobowe (adresaci,linia);
+            rozdzielDaneNaPojedynczeInformacjeOsobowe (adresaci,linia,idZalogowanegoUzytkownika);
         }
         cout << "...";
         Sleep(500);
@@ -507,7 +509,7 @@ int main() {
         }
 
         else {
-        odczytajDane(adresaci);
+        odczytajDane(adresaci,idZalogowanegoUzytkownika);
         wybor=wyswietlMenu();
 
         if (wybor == '1') {
@@ -519,7 +521,7 @@ int main() {
             wyszukajNazwisko(adresaci);
         } else if (wybor == '4') {
             wyswietlAdresatow(adresaci);
-            Sleep(7000);
+            Sleep(19000);
         } else if (wybor == '5') {
             usunAdresata(adresaci);
             Sleep(3000);

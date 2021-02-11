@@ -15,7 +15,7 @@ struct Uzytkownik {
 };
 
 struct Adresat {
-    int idAdresata=0;
+    int idAdresata=0; int idUzytkownika=0;
     string imie="", nazwisko="", nr_telefonu="", adres="", email="";
 };
 
@@ -38,7 +38,7 @@ char wyswietlMenu () {
     return wybor;
 }
 
-vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia) {
+vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia) {   //updated
     Adresat osoba;
     int nrLinii = 1;
     stringstream ss(linia);
@@ -49,20 +49,22 @@ vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &ad
         case 1:
             osoba.idAdresata = (atoi(pojedynczaInformacja.c_str()));
             break;
-
         case 2:
-            osoba.imie = pojedynczaInformacja;
+            osoba.idUzytkownika = (atoi(pojedynczaInformacja.c_str()));
             break;
         case 3:
-            osoba.nazwisko = pojedynczaInformacja;
+            osoba.imie = pojedynczaInformacja;
             break;
         case 4:
-            osoba.nr_telefonu = pojedynczaInformacja;
+            osoba.nazwisko = pojedynczaInformacja;
             break;
         case 5:
-            osoba.email = pojedynczaInformacja;
+            osoba.nr_telefonu = pojedynczaInformacja;
             break;
         case 6:
+            osoba.email = pojedynczaInformacja;
+            break;
+        case 7:
             osoba.adres = pojedynczaInformacja;
             break;
         }
@@ -79,7 +81,7 @@ void odczytajDane(vector <Adresat> &adresaci) {
     fstream plik;
     adresaci.clear();
 
-    plik.open("KsiazkaAdresowa.txt", ios::in);
+    plik.open("Adtresaci.txt", ios::in);
     if (plik.good() == false) {
         cout << "Ksiazka adresowa jest pusta."<<endl;
         Sleep(1000);
@@ -93,13 +95,15 @@ void odczytajDane(vector <Adresat> &adresaci) {
     plik.close();
 }
 
-void zapiszDane(vector <Adresat> &adresaci) {
-    Adresat osoba;
+void zapiszDane(vector <Adresat> &adresaci,int idZalogowanegoUzytkownika ) {
+     Adresat osoba;
 
     if (adresaci.empty() == true) {
         osoba.idAdresata=1;
+        osoba.idUzytkownika=idZalogowanegoUzytkownika;
     } else {
         osoba.idAdresata=adresaci.back().idAdresata+1;
+        osoba.idUzytkownika=idZalogowanegoUzytkownika;
     } ;
 
     cout<<endl;
@@ -117,16 +121,16 @@ void zapiszDane(vector <Adresat> &adresaci) {
 
     adresaci.push_back(osoba);
     fstream plik;
-    plik.open("KsiazkaAdresowa.txt", ios::out | ios::app);
+    plik.open("Adtresaci.txt", ios::out | ios::app);
     if (plik.good()) {
-        plik << osoba.idAdresata <<"|"<<osoba.imie<<"|"<<osoba.nazwisko <<"|"<< osoba.nr_telefonu << "|" << osoba.adres << "|"<< osoba.email << endl;
+        plik << osoba.idAdresata <<"|"<<osoba.idUzytkownika<<"|"<<osoba.imie<<"|"<<osoba.nazwisko <<"|"<< osoba.nr_telefonu << "|" << osoba.adres << "|"<< osoba.email << endl;
 
         plik.close();
 
         cout <<endl<< "Dane zostaly zapisane." << endl;
         Sleep(1000);
     } else {
-        cout << "Nie mozna otworzyc pliku: KsiazkaAdresowa.txt" << endl;
+        cout << "Nie mozna otworzyc pliku: Adtresaci.txt" << endl;
     }
 }
 
@@ -191,7 +195,7 @@ void przepiszPlik(vector <Adresat> &adresaci) {
     vector <Adresat> ::iterator itrEnd = adresaci.end();
     fstream plik;
 
-    plik.open("KsiazkaAdresowa.txt", ios::trunc| ios::out);
+    plik.open("Adtresaci.txt", ios::trunc| ios::out);
     if (plik.good()) {
         for (itr; itr != itrEnd; ++itr) {
             plik << itr -> idAdresata <<"|"<<itr -> imie<<"|"<<itr -> nazwisko <<"|"<< itr -> nr_telefonu << "|" << itr -> adres << "|"<< itr -> email << endl;
@@ -200,7 +204,7 @@ void przepiszPlik(vector <Adresat> &adresaci) {
         cout << endl<<"Dane zostaly zapisane." << endl;
         Sleep(1000);
     } else {
-        cout << "Nie mozna otworzyc pliku: KsiazkaAdresowa.txt" << endl;
+        cout << "Nie mozna otworzyc pliku: Adtresaci.txt" << endl;
     }
 }
 
@@ -507,7 +511,7 @@ int main() {
         wybor=wyswietlMenu();
 
         if (wybor == '1') {
-            zapiszDane(adresaci);
+            zapiszDane(adresaci,idZalogowanegoUzytkownika);
             Sleep(3000);
         } else if (wybor == '2') {
             wyszukajImie(adresaci);

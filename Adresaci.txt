@@ -3,3 +3,5 @@
 3|2|Maciej|Drwal|111222888|maciej@drwal.pl|ul. Wesola 1, Krakow|
 4|2|Adam|Woronowicz|333111888|adam@woronowicz.pl|ul. Zakonna 5, Bialystok|
 5|1|Jakub|Gierszal|444222777|jakub@gierszal.pl|ul. Zwycieska 4, Warszawa|
+6|3|ko|das|adss|dsa|dsas|
+7|3|polka|dwk|628|22|1|

@@ -1,3 +1,6 @@
 1|ola|lalala2
 2|ola2|zxc123
 3|Kasia|Sapa1ska
+4|Ola|mama
+5|Anai|Anai
+6|Leon|Piet

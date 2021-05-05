@@ -37,7 +37,6 @@ char wczytajZnak() {
     return znak;
 }
 
-
 char wyswietlMenu () {
 
     char wybor=' ';
@@ -57,7 +56,7 @@ char wyswietlMenu () {
     return wybor;
 }
 
-vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia,int &idZalogowanegoUzytkownika) {   //updated
+vector <Adresat> rozdzielDaneNaPojedynczeInformacjeOsobowe (vector <Adresat> &adresaci, string linia,int &idZalogowanegoUzytkownika) {
     Adresat osoba;
     int nrLinii = 1;
     stringstream ss(linia);
@@ -133,7 +132,6 @@ int sprawdzOstatnieID() {
         switch(nr_linii) {
         case 1:
             if (atoi(linia.c_str()) == 0) {
-
                 return ostatnieID;
             } else {
                 ostatnieID = atoi(linia.c_str());
@@ -192,8 +190,6 @@ void zapiszDane(vector <Adresat> &adresaci,int idZalogowanegoUzytkownika ) {
     }
 }
 
-
-
 void wyszukajImie(vector <Adresat> &adresaci) {
     string imie;
     vector <Adresat> ::iterator itr = adresaci.begin();
@@ -249,26 +245,91 @@ void wyswietlAdresatow (vector <Adresat> &adresaci) {
     }
 }
 
-void przepiszPlik(vector <Adresat> &adresaci) {
+void przepiszPlikE(vector <Adresat>& adresaci,int &idZalogowanegoUzytkownika) {
 
     vector <Adresat> ::iterator itr = adresaci.begin();
     vector <Adresat> ::iterator itrEnd = adresaci.end();
-    fstream plik;
+    fstream plik,plikTemp;
+    string linia ="";
+    plik.open("Adresaci.txt", ios::in);
+    plikTemp.open("Adresaci_tymczasowy.txt", ios::out);
 
-    plik.open("Adtesaci.txt", ios::trunc| ios::out);
     if (plik.good()) {
-        for (itr; itr != itrEnd; ++itr) {
-            plik << itr -> idAdresata <<"|"<<itr -> imie<<"|"<<itr -> nazwisko <<"|"<< itr -> nr_telefonu << "|" << itr -> adres << "|"<< itr -> email << endl;
+        while(getline(plik,linia))
+
+        {
+
+            stringstream ss(linia);
+            string id = " ";
+            getline(ss, id, '|');
+
+
+            if ((itr -> idAdresata) == (atoi(id.c_str())))
+
+            {
+                plikTemp << itr -> idAdresata <<"|"<<itr -> idUzytkownika<<"|"<< itr -> imie<<"|"<<itr -> nazwisko <<"|"<< itr -> nr_telefonu << "|" << itr -> adres << "|"<< itr -> email << endl;
+            } else        plikTemp<<linia<<endl;
         }
-        plik.close();
-        cout << endl<<"Dane zostaly zapisane." << endl;
-        Sleep(1000);
     } else {
         cout << "Nie mozna otworzyc pliku: Adresaci.txt" << endl;
     }
+
+    plikTemp.close();
+    plik.close();
+
+    if (remove("Adresaci.txt") == 0 )
+        cout << "Plik usuniety" << endl;
+    else
+        cout << "Wystapil blad podczas usuwania pliku" << endl;
+
+    rename("Adresaci_tymczasowy.txt","Adresaci.txt");
+
 }
 
-void usunAdresata (vector <Adresat> &adresaci) {
+void przepiszPlikU(int &idDoUsuniecia) {
+
+    fstream plik,plikTemp;
+    string linia ="";
+    plik.open("Adresaci.txt", ios::in);
+    plikTemp.open("Adresaci_tymczasowy.txt", ios::out);
+
+    cout<<"idDoUsuniecia="<<idDoUsuniecia;
+
+    if (plik.good()) {
+        while(getline(plik,linia))
+
+        {
+            stringstream ss(linia);
+            string id = " ";
+            getline(ss, id, '|');
+
+            cout<<"pisze linie"<<linia<<endl;
+            cout<<"pid adresata"<<id<<endl;
+
+            if ((atoi(id.c_str())) == idDoUsuniecia)
+
+            {
+            } else       {
+                plikTemp<<linia<<endl;
+            }
+        }
+    } else {
+        cout << "Nie mozna otworzyc pliku: Adresaci.txt" << endl;
+    }
+
+    plikTemp.close();
+    plik.close();
+
+    if (remove("Adresaci.txt") == 0 )
+        cout << "Plik usuniety" << endl;
+    else
+        cout << "Wystapil blad podczas usuwania pliku" << endl;
+
+    rename("Adresaci_tymczasowy.txt","Adresaci.txt");
+
+}
+
+void usunAdresata (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
 
     int wybraneID;
     char potwierdzenieUsuniecia;
@@ -284,21 +345,24 @@ void usunAdresata (vector <Adresat> &adresaci) {
 
             potwierdzenieUsuniecia = wczytajZnak();
             if (potwierdzenieUsuniecia == 't') {
-                itr= adresaci.erase (itr);
+
+                przepiszPlikU(wybraneID);
             }
             cout << "Kontakt zostal usuniety";
-            Sleep(800);
-            przepiszPlik(adresaci);
-
+            Sleep(1800);
+            licznik++;
         }
+
     }
-    licznik++;
+    if(licznik==0) {
+        cout<<"W twojej ksiazce nie znajduje sie taki Adresat"<<endl;
+        Sleep(1800);
+    }
 }
 
-
-
-void edycja (vector <Adresat> &adresaci) {
-    int wybor,id ;
+void edycja (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
+    int id ;
+    char wybor;
     vector <Adresat> ::iterator itr = adresaci.begin();
     vector <Adresat> ::iterator itrEnd = adresaci.end();
 
@@ -324,42 +388,40 @@ void edycja (vector <Adresat> &adresaci) {
             cout<<"Wybierz 1-6: ";
             wybor = wczytajZnak();
 
-            switch (wybor) {
-            case 1:
+            if (wybor=='1') {
                 cout<< "Podaj nowe imie:";
                 cin>>itr -> imie;
-                przepiszPlik(adresaci);
+                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
                 break;
-            case 2:
+            } else if (wybor=='2') {
                 cout<< "Podaj nowe nazwisko:";
                 cin>>itr -> nazwisko;
-                przepiszPlik(adresaci);
+                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
                 break;
-            case 3:
+            } else if (wybor=='3') {
                 cout<< "Podaj nowy nr telefonu:";
                 cin>>itr -> nr_telefonu;
-                przepiszPlik(adresaci);
+                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
                 break;
-            case 4:
+            } else if (wybor=='4') {
                 cout<< "Podaj nowy email:";
                 cin>>itr -> email;
-                przepiszPlik(adresaci);
+                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
                 break;
-            case 5:
+            } else if (wybor=='5') {
                 cout<< "Podaj nowy adres:";
                 cin.sync();
                 getline(cin, itr -> adres);
-                //cin>>itr -> adres;
-                przepiszPlik(adresaci);
+                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
                 break;
-            case 6:
+            } else if (wybor=='6') {
                 system("cls");
                 break;
             }
             break;
 
         } else if (itr==itrEnd)
-            cout <<"Nie znaleziono osoby o podanym ID ";
+            cout <<"Nie znaleziono osoby o podanym ID "<<endl;
         Sleep(2000);
     }
 }
@@ -421,7 +483,6 @@ void rejestracja ( vector <Uzytkownik> &uzytkownicy) {
     } else {
         uzytkownik.idUzytkownika=uzytkownicy.back().idUzytkownika+1;
     } ;
-
 
     cout<< "Podaj nazwe uzytkownika: ";
     cin>>uzytkownik.nazwa;
@@ -534,7 +595,6 @@ int main() {
     vector <Adresat> adresaci;
 
     int idZalogowanegoUzytkownika=0;
-    int temp=0;
 
     char wybor=' ';
     while(1) {
@@ -560,8 +620,7 @@ int main() {
         else {
 
             odczytajDane(adresaci,idZalogowanegoUzytkownika);
-            temp = sprawdzOstatnieID();
-            cout<<"Sprawdzamy id ostatniego uzytkownika"<<temp <<endl;
+
             Sleep(3000);
             wybor=wyswietlMenu();
 
@@ -569,17 +628,30 @@ int main() {
                 zapiszDane(adresaci,idZalogowanegoUzytkownika);
                 Sleep(3000);
             } else if (wybor == '2') {
+                if (adresaci.empty()) {
+                    cout<<"Twoja ksiazka jest pusta.";
+                } else
                 wyszukajImie(adresaci);
             } else if (wybor == '3') {
-                wyszukajNazwisko(adresaci);
+                if (adresaci.empty()) {
+                    cout<<"Twoja ksiazka jest pusta.";
+                } else wyszukajNazwisko(adresaci);
             } else if (wybor == '4') {
-                wyswietlAdresatow(adresaci);
-                Sleep(19000);
+                if (adresaci.empty()) {
+                    cout<<"Twoja ksiazka jest pusta.";
+                } else wyswietlAdresatow(adresaci);
+                Sleep(3000);
             } else if (wybor == '5') {
-                usunAdresata(adresaci);
+                if (adresaci.empty()) {
+                    cout<<"Twoja ksiazka jest pusta.";
+                } else
+                usunAdresata(adresaci,idZalogowanegoUzytkownika);
                 Sleep(3000);
             } else if (wybor == '6') {
-                edycja (adresaci);
+                if (adresaci.empty()) {
+                    cout<<"Twoja ksiazka jest pusta.";
+                } else
+                edycja (adresaci,idZalogowanegoUzytkownika);
             } else if (wybor == '7') {
                 zmianaHasla(uzytkownicy,idZalogowanegoUzytkownika);
                 przepiszPlik(uzytkownicy);

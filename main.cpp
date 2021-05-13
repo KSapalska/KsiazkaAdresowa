@@ -293,9 +293,7 @@ void przepiszPlikU(int &idDoUsuniecia) {
     plik.open("Adresaci.txt", ios::in);
     plikTemp.open("Adresaci_tymczasowy.txt", ios::out);
 
-    cout<<"idDoUsuniecia="<<idDoUsuniecia;
-
-    if (plik.good()) {
+       if (plik.good()) {
         while(getline(plik,linia))
 
         {
@@ -303,8 +301,7 @@ void przepiszPlikU(int &idDoUsuniecia) {
             string id = " ";
             getline(ss, id, '|');
 
-            cout<<"pisze linie"<<linia<<endl;
-            cout<<"pid adresata"<<id<<endl;
+
 
             if ((atoi(id.c_str())) == idDoUsuniecia)
 
@@ -347,8 +344,9 @@ void usunAdresata (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
             if (potwierdzenieUsuniecia == 't') {
 
                 przepiszPlikU(wybraneID);
+                cout << "Kontakt zostal usuniety";
             }
-            cout << "Kontakt zostal usuniety";
+            else cout<<" Kontakt wciaz istnieje:)"<<endl;
             Sleep(1800);
             licznik++;
         }

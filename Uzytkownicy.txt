@@ -1,9 +1,2 @@
-1|ola|lalala2
-2|Kasia|zxc123
-4|Ola|mama
-5|Anai|Anai
-6|Leon|Piet
-7|magda|z
-8|magdaz|zxc
-9|ala|ala
-10|zigi|akak
+1|Kasia1|zxc123
+2|Kasia2|zxc123

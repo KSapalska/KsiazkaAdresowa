@@ -237,7 +237,7 @@ void wyswietlAdresatow (vector <Adresat> &adresaci) {
     for (itr; itr != itrEnd; ++itr) {
         cout << endl;
         cout << "ID: " << itr -> idAdresata << endl;
-        cout << itr -> imie << " " << itr -> nazwisko<< endl;
+        cout << itr -> imie << " " << itr -> nazwisko << endl;
         cout << "Telefon: " << itr -> nr_telefonu << endl;
         cout << "Email: " << itr -> email << endl;
         cout << "Adres: " << itr -> adres << endl;
@@ -245,29 +245,29 @@ void wyswietlAdresatow (vector <Adresat> &adresaci) {
     }
 }
 
-void przepiszPlikE(vector <Adresat>& adresaci,int &idZalogowanegoUzytkownika) {
+void przepiszPlikE(vector <Adresat> &adresaci,int &idDoEdycji) {
 
-    vector <Adresat> ::iterator itr = adresaci.begin();
-    vector <Adresat> ::iterator itrEnd = adresaci.end();
     fstream plik,plikTemp;
     string linia ="";
     plik.open("Adresaci.txt", ios::in);
     plikTemp.open("Adresaci_tymczasowy.txt", ios::out);
+    vector <Adresat> ::iterator itr = adresaci.begin();
+    vector <Adresat> ::iterator itrEnd = adresaci.end();
 
     if (plik.good()) {
         while(getline(plik,linia))
 
         {
-
             stringstream ss(linia);
             string id = " ";
             getline(ss, id, '|');
 
-
-            if ((itr -> idAdresata) == (atoi(id.c_str())))
-
+            if ((idDoEdycji) == (atoi(id.c_str())))
             {
-                plikTemp << itr -> idAdresata <<"|"<<itr -> idUzytkownika<<"|"<< itr -> imie<<"|"<<itr -> nazwisko <<"|"<< itr -> nr_telefonu << "|" << itr -> adres << "|"<< itr -> email << endl;
+                for (itr; itr != itrEnd; ++itr)   {
+                    if ((itr -> idAdresata) == (idDoEdycji))
+                       plikTemp << itr -> idAdresata <<"|"<<itr -> idUzytkownika<<"|"<< itr -> imie <<"|" << itr -> nazwisko <<"|"<< itr -> nr_telefonu << "|" << itr -> adres << "|"<< itr -> email << "|"<< endl;
+                }
             } else        plikTemp<<linia<<endl;
         }
     } else {
@@ -293,7 +293,7 @@ void przepiszPlikU(int &idDoUsuniecia) {
     plik.open("Adresaci.txt", ios::in);
     plikTemp.open("Adresaci_tymczasowy.txt", ios::out);
 
-       if (plik.good()) {
+    if (plik.good()) {
         while(getline(plik,linia))
 
         {
@@ -345,8 +345,7 @@ void usunAdresata (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
 
                 przepiszPlikU(wybraneID);
                 cout << "Kontakt zostal usuniety";
-            }
-            else cout<<" Kontakt wciaz istnieje:)"<<endl;
+            } else cout<<" Kontakt wciaz istnieje:)"<<endl;
             Sleep(1800);
             licznik++;
         }
@@ -389,28 +388,31 @@ void edycja (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
             if (wybor=='1') {
                 cout<< "Podaj nowe imie:";
                 cin>>itr -> imie;
-                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
+                cout<< "Podaane nowe imie to:"<<itr -> imie;
+                Sleep(2000);
+                przepiszPlikE(adresaci,id);
                 break;
             } else if (wybor=='2') {
                 cout<< "Podaj nowe nazwisko:";
                 cin>>itr -> nazwisko;
-                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
+                przepiszPlikE(adresaci,id);
                 break;
             } else if (wybor=='3') {
                 cout<< "Podaj nowy nr telefonu:";
                 cin>>itr -> nr_telefonu;
-                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
+                przepiszPlikE(adresaci,id);
                 break;
             } else if (wybor=='4') {
                 cout<< "Podaj nowy email:";
                 cin>>itr -> email;
-                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
+                przepiszPlikE(adresaci,id);
                 break;
             } else if (wybor=='5') {
                 cout<< "Podaj nowy adres:";
                 cin.sync();
                 getline(cin, itr -> adres);
-                przepiszPlikE(adresaci,idZalogowanegoUzytkownika);
+
+                przepiszPlikE(adresaci,id);
                 break;
             } else if (wybor=='6') {
                 system("cls");
@@ -420,6 +422,9 @@ void edycja (vector <Adresat> &adresaci,int &idZalogowanegoUzytkownika) {
 
         } else if (itr==itrEnd)
             cout <<"Nie znaleziono osoby o podanym ID "<<endl;
+
+
+
         Sleep(2000);
     }
 }
@@ -629,7 +634,7 @@ int main() {
                 if (adresaci.empty()) {
                     cout<<"Twoja ksiazka jest pusta.";
                 } else
-                wyszukajImie(adresaci);
+                    wyszukajImie(adresaci);
             } else if (wybor == '3') {
                 if (adresaci.empty()) {
                     cout<<"Twoja ksiazka jest pusta.";
@@ -643,13 +648,13 @@ int main() {
                 if (adresaci.empty()) {
                     cout<<"Twoja ksiazka jest pusta.";
                 } else
-                usunAdresata(adresaci,idZalogowanegoUzytkownika);
+                    usunAdresata(adresaci,idZalogowanegoUzytkownika);
                 Sleep(3000);
             } else if (wybor == '6') {
                 if (adresaci.empty()) {
                     cout<<"Twoja ksiazka jest pusta.";
                 } else
-                edycja (adresaci,idZalogowanegoUzytkownika);
+                    edycja (adresaci,idZalogowanegoUzytkownika);
             } else if (wybor == '7') {
                 zmianaHasla(uzytkownicy,idZalogowanegoUzytkownika);
                 przepiszPlik(uzytkownicy);
